@@ -50,17 +50,34 @@ class Response
      */
     protected $params;
     
-
     public function __construct($responseString, $status = null, $params = [])
     {
         if (is_array($responseString)) {
             $this->response = $responseString;
         } else {
-            $this->string = $responseString;
-            $this->string = preg_replace('/\x03/', ' ', $this->string);
+            $this->string = $this->normalizeString($responseString);
         }
         $this->status = $status;
         $this->params = $params;
+    }
+
+    /**
+     * Remove bad characters from response json string
+     * @param string $string
+     * @return string
+     */
+    private function normalizeString(string $string): string
+    {
+        $cases = [
+            '/\x03/' => ' ',
+            '/[[:cntrl:]]/' => ''
+        ];
+
+        foreach ($cases as $problem => $solution) {
+            $string = preg_replace($problem, $solution, $string);
+        }
+
+        return $string;
     }
 
     /*
