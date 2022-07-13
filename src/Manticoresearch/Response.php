@@ -87,11 +87,7 @@ class Response
     public function getResponse()
     {
         if (null === $this->response) {
-            try {
-                $this->response = json_decode($this->string, true, 512, JSON_THROW_ON_ERROR);
-            } catch (\Throwable $e) {
-                throw new RuntimeException($e->getMessage());
-            }
+            $this->response = json_decode($this->string, true);
 
             if (json_last_error() !== JSON_ERROR_NONE) {
                 throw new RuntimeException('fatal error while trying to decode JSON response');
